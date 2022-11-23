@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>bootstrap</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <script src="jquery/jquery.min.js"></script>
+    <script src="jquery/bootstrap.min.js"></script>
+</head>
+<body>
+    <div class="jumbotron text-center">
+        <h2>Bootstrap Tutorial</h2>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3"></div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="list">List:</label>
+                    <textarea class="form-control" rows="5" name="list" id="list"></textarea>
+                </div>
+                <div class="form-group text-center">
+                    <button id="submit" class="btn btn-danger">Check now!</button>
+                </div>
+            </div>
+            <div class="col-md-3"></div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <input type="hidden" value="0" name="input-count-live" id="input-count-live" />
+                    <label for="live" style="color: #00aa00">Live: <span class="count-live"></span></label>
+                    <textarea class="form-control" rows="6" name="live" id="live"></textarea>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <input type="hidden" value="0" name="input-count-die" id="input-count-die" />
+                    <label for="die" style="color: red">Die: <span class="count-die"></span></label>
+                    <textarea class="form-control" rows="6" name="die" id="die"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function(){
+            $("#submit").click(function(e) {
+                e.preventDefault()
+                $('#live').val('');
+                $('.count-live').html('');
+                $('#die').val('');
+                $('.count-die').html('');
+                $('#input-count-live').val('');
+                $('#input-count-die').val('');
+                let list = $.trim($('#list').val());
+                const arrList = list.split("\n");
+                for (let i = 0; i < arrList.length; i++) {
+                    let email = arrList[i];
+                    checkLive(email);
+                }
+            });
+        });
+
+        function checkLive(email) {
+            var url = 'https://isitarealemail.com/api/email/validate?email=' + email;
+            $.get(url, function(data) {
+                if (data.status == 'valid') {
+                    liveData = $('#live').val();
+                    if ($.trim(liveData) !== '') {
+                        liveData = liveData + '\n' + email;
+                    } else {
+                        liveData = email;
+                    }
+                    countLive = parseInt($('#input-count-live').val()) ? parseInt($('#input-count-live').val()) + 1 : 1;
+                    $('#live').val(liveData);
+                    $('#input-count-live').val(countLive);
+                    $('.count-live').html(countLive);
+                } else {
+                    // die data
+                    dieData = $('#die').val();
+                    if ($.trim(dieData) !== '') {
+                        dieData = dieData + '\n' + email;
+                    } else {
+                        dieData = email;
+                    }
+                    countDie = parseInt($('#input-count-die').val()) ? parseInt($('#input-count-die').val()) + 1 : 1;
+                    $('#die').val(dieData);
+                    $('#input-count-die').val(countDie);
+                    $('.count-die').html(countDie);
+                }
+            });
+        }
+    </script>
+</body>
+</html>
